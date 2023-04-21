@@ -1,3 +1,3 @@
 #+begin_center
-My W(h)icked Dotfiles
+* My W(h)icked Dotfiles
 #+end_center
