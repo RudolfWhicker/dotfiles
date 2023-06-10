@@ -2,6 +2,7 @@
 [X] Patch DWM
 [X] Patch ST
 [X] Customize ST
-[ ] Customize DWM
+[X] Customize DWM
+[ ] Fix Ligature Problem in ST
 [ ] EWW
 [ ] Custom dmenu
