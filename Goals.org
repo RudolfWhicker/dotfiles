@@ -1,0 +1,7 @@
+* TODOS
+[X] Patch DWM
+[X] Patch ST
+[X] Customize ST
+[ ] Customize DWM
+[ ] EWW
+[ ] Custom dmenu
