@@ -5,7 +5,7 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
+static char *font = "Cartograph CF:pixelsize=13:antialias=true:autohint=true";
 /* Spare fonts */
 static char *font2[] = {
 /*	"Inconsolata for Powerline:pixelsize=12:antialias=true:autohint=true", */
@@ -113,33 +113,30 @@ unsigned int tabspaces = 8;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-	/* 8 normal colors */
-	"black",
-	"red3",
-	"green3",
-	"yellow3",
-	"blue2",
-	"magenta3",
-	"cyan3",
-	"gray90",
+	"#475258",
+	"#e67e80",
+	"#a7c080",
+	"#dbbc7f",
+	"#7fbbb3",
+	"#d699b6",
+	"#83c092",
+      	"#d3c6aa",
 
-	/* 8 bright colors */
-	"gray50",
-	"red",
-	"green",
-	"yellow",
-	"#5c5cff",
-	"magenta",
-	"cyan",
-	"white",
-
+     	"#475258",
+      	"#e67e80",
+      	"#a7c080",
+      	"#dbbc7f",
+      	"#7fbbb3",
+      	"#d699b6",
+      	"#83c092",
+      	"#d3c6aa",
 	[255] = 0,
 
 	/* more colors can be added after 255 to use with DefaultXX */
-	"#cccccc",
-	"#555555",
-	"gray90", /* default foreground colour */
-	"black", /* default background colour */
+	"#d3c6aa",
+	"#d3c6aa",
+	"#d3c6aa", /* default foreground colour */
+	"#2d353b", /* default background colour */
 };
 
 
@@ -165,7 +162,7 @@ static unsigned int defaultrcs = 257;
  * 7: blinking st cursor
  * 8: steady st cursor
  */
-static unsigned int cursorstyle = 1;
+static unsigned int cursorstyle = 3;
 static Rune stcursor = 0x2603; /* snowman ("☃") */
 
 /*
