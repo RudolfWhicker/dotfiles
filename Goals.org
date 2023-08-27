@@ -1,8 +1,0 @@
-* TODOS
-[X] Patch DWM
-[X] Patch ST
-[X] Customize ST
-[X] Customize DWM
-[ ] Fix Ligature Problem in ST
-[ ] EWW
-[ ] Custom dmenu
