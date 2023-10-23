@@ -48,6 +48,41 @@
   ;; Reset garbage collector limit after init process has ended (8Mo)
   (add-hook 'after-init-hook
             #'(lambda () (setq gc-cons-threshold (* 8 1024 1024))))
+
+  (defun ar/show-welcome-buffer ()
+    "Show *Welcome* buffer."
+    (with-current-buffer (get-buffer-create "*Welcome*")
+      (setq truncate-lines t)
+      (let* ((buffer-read-only)
+             (image-path "~/.emacs.d/emacs.png")
+             (image (create-image image-path))
+             (size (image-size image))
+             (height (cdr size))
+             (width (car size))
+             (top-margin (floor (/ (- (window-height) height) 2)))
+             (left-margin (floor (/ (- (window-width) width) 2)))
+             (prompt-title "Welcome to Emacs!"))
+        (erase-buffer)
+        (setq mode-line-format nil)
+        (goto-char (point-min))
+        (insert (make-string top-margin ?\n ))
+        (insert (make-string left-margin ?\ ))
+        (insert-image image)
+        (insert "\n\n\n")
+        (insert (make-string (floor (/ (- (window-width) (string-width prompt-title)) 2)) ?\ ))
+        (insert prompt-title))
+      (setq cursor-type nil)
+      (read-only-mode +1)
+      (switch-to-buffer (current-buffer))
+      (local-set-key (kbd "q") 'kill-this-buffer)))
+
+  (setq initial-scratch-message nil)
+  (setq inhibit-startup-screen t)
+
+  (when (< (length command-line-args) 2)
+    (add-hook 'emacs-startup-hook (lambda ()
+                                    (when (display-graphic-p)
+                                      (ar/show-welcome-buffer)))))
 #+END_SRC
 
 ** Package Management
@@ -103,6 +138,32 @@ To prevent org from littering my project folders
 #+END_SRC
 
 
+* Developement
+** Magit
+#+begin_src emacs-lisp
+  (use-package magit)
+#+end_src
+
+** Vterm
+#+begin_src emacs-lisp
+  (use-package vterm)
+#+end_src
+
+** Flutter
+#+begin_src emacs-lisp
+  (use-package dart-mode
+      ;; Optional
+    :hook (dart-mode . flutter-test-mode))
+
+  (use-package flutter
+    :after dart-mode
+    :bind (:map dart-mode-map
+                ("C-M-x" . #'flutter-run-or-hot-reload))
+    :config
+    (setenv "JAVA_HOME" "~/.local/bin/android-studio/jbr"))
+#+end_src
+
+
 * Appearance
 ** Frame
 #+begin_src emacs-lisp
@@ -128,6 +189,15 @@ To prevent org from littering my project folders
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
   (menu-bar-mode -1)
+
+  ;; All the icons
+  (use-package all-the-icons)
+
+  ;; Line numbers
+  (display-line-numbers-mode)
+
+  ;; Highlight current line
+  (global-hl-line-mode)
 
   (use-package visual-fill-column
     :init
@@ -177,35 +247,58 @@ Smoother scrolling.
 
 ** Modeline
 #+begin_src emacs-lisp
-  (use-package spaceline
+  (use-package fontset
+    :straight (:type built-in) ;; only include this if you use straight
+    :config
+    ;; Use symbola for proper unicode
+    (when (member "Symbola" (font-family-list))
+      (set-fontset-font
+       t 'symbol "Symbola" nil)))
+  (use-package bespoke-modeline
+    :straight (:type git :host github :repo "mclear-tools/bespoke-modeline") 
     :init
-    (require 'spaceline-config)
-    (setq powerline-default-separator 'wave)
-    (spaceline-spacemacs-theme))
-  (use-package nyan-mode
-    :init (nyan-mode))
+    ;; Set header line
+    (setq bespoke-modeline-position 'top)
+    ;; Set mode-line height
+    (setq bespoke-modeline-size 2)
+    ;; Show diff lines in mode-line
+    (setq bespoke-modeline-git-diff-mode-line t)
+    ;; Set mode-line cleaner
+    (setq bespoke-modeline-cleaner t)
+    ;; Use mode-line visual bell
+    (setq bespoke-modeline-visual-bell nil)
+    ;; Set vc symbol
+    (setq  bespoke-modeline-vc-symbol "G:")
+    :config
+    (bespoke-modeline-mode))
 #+end_src
 
 ** Theme
 #+begin_src emacs-lisp
-  (use-package doom-themes
-    :config
-    (add-to-list 'custom-theme-load-path "~/.emacs.flavours.d/default/themes/")
-    (load-theme 'ibm-carbon-gray-100 t)
-    (setq doom-themes-enable-bold t
-          doom-themes-enable-italic t)
-    (doom-themes-visual-bell-config)
+  ;; (use-package doom-themes
+  ;;   :config
+  ;;   (add-to-list 'custom-theme-load-path "~/.emacs.flavours.d/default/themes/")
+  ;;   (load-theme 'ibm-carbon-gray-100 t)
+  ;;   (setq doom-themes-enable-bold t
+  ;;         doom-themes-enable-italic t)
+  ;;   (doom-themes-visual-bell-config)
+  ;;   :custom
+  ;;   (ibm-carbon-gray-100-warm t)
+  ;;   (ibm-carbon-gray-100-line-number-colored t))
+
+  (use-package catppuccin-theme
     :custom
-    (ibm-carbon-gray-100-warm t)
-    (ibm-carbon-gray-100-line-number-colored t))
+    (catppuccin-flavor 'mocha)
+    :init
+    (load-theme 'catppuccin t))
 #+end_src
 
 ** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-  		    :font "M PLUS Code Latin"
-  		    :weight 'regular
-  		    :height 105)
+  		    :font "JetBrains Mono"
+  		    :weight 'light
+  		    :height 110)
   (set-face-attribute 'variable-pitch nil
   		    :font "Roboto Mono"
   		    :height 105
@@ -214,6 +307,22 @@ Smoother scrolling.
   		    :font "Roboto Mono"
   		    :height 105
   		    :weight 'regular)
+#+end_src
+
+** Delimeters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+
+  (use-package smartparens
+    :hook (prog-mode . smartparens-mode))
+#+end_src
+
+** Indent bars
+#+begin_src emacs-lisp
+  (use-package indent-bars
+    :straight (indent-bars :type git :host github :repo "jdtsmith/indent-bars")
+    :hook ((prog-mode) . indent-bars-mode))
 #+end_src
 
 ** Minibuffer
@@ -255,22 +364,10 @@ Smoother scrolling.
 #+end_src
 
 
-* Developement
-** Magit
-#+begin_src emacs-lisp
-  (use-package magit)
-#+end_src
-
-** Vterm
-#+begin_src emacs-lisp
-  (use-package vterm)
-#+end_src
-
-
 * Completeion
-** Corfu
+** COMMENT Corfu
 #+begin_src emacs-lisp
-  (use-package corfu
+  (use-package corfu			;
     :custom
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
     (corfu-auto t)                 ;; Enable auto completion
@@ -291,18 +388,29 @@ Smoother scrolling.
   (corfu-popupinfo-mode)
 #+end_src
 
+** Yasnippet
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :init
+    (yas-global-mode 1))
+#+end_src
+
+** LSP Bridge
+#+begin_src emacs-lisp
+  (use-package lsp-bridge
+    :straight '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge"
+              :files (:defaults "*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
+              :build (:not compile))
+    :init
+    (global-lsp-bridge-mode))
+#+end_src
+
 ** Orderless
 #+begin_src emacs-lisp
   (use-package orderless
     :custom
     (completion-styles '(orderless basic))
     (completion-category-overrides '((file (styles basic partial-completion)))))
-#+end_src
-
-** Yasnippet
-#+begin_src emacs-lisp
-  (use-package yasnippet
-    :init (yas-global-mode 1))
 #+end_src
 
 
@@ -332,6 +440,45 @@ Smoother scrolling.
 ** Typescript
 #+begin_src emacs-lisp
   (use-package typescript-mode)
+#+end_src
+
+** JS2
+#+begin_src emacs-lisp
+  (use-package js2-mode
+    :hook ((js-mode-hook . js2-minor-mode)))
+#+end_src
+
+** Skewer
+#+begin_src emacs-lisp
+  (use-package skewer-mode
+    :hook ((js2-mode-hook . skewer-mode)
+  	 (css-mode-hook . skewer-css-mode)
+  	 (html-mode-hook . skewer-html-mode)))
+#+end_src
+
+** Markdown
+#+begin_src emacs-lisp
+  (use-package markdown-mode)
+#+end_src
+
+
+* Key Binding
+** Ace Window
+#+begin_src emacs-lisp
+  (use-package ace-window
+    :bind (
+  	 ("M-o" . ace-window))
+    :config
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    (ace-window-display-mode))
+#+end_src
+
+** Evil Mode
+#+begin_src emacs-lisp
+  (use-package evil
+    :init
+    (evil-mode))
+  (use-package undo-tree)
 #+end_src
 
 
@@ -364,6 +511,12 @@ Smoother scrolling.
   (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
   (add-to-list 'org-structure-template-alist '("jv" . "src java"))
 #+END_SRC
+
+** Org Modern
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :hook (org-mode . org-modern-mode))
+#+end_src
 
 ** Org Fonts
 #+begin_src emacs-lisp
