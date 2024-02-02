@@ -316,6 +316,13 @@ Some pretties
 #+end_src
 
 
+* Git
+** Magit
+#+begin_src emacs-lisp
+  (use-package magit)
+#+end_src
+
+
 * Completion
 ** orderless
 #+begin_src emacs-lisp
