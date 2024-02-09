@@ -107,8 +107,7 @@ More pretties
 ** fountain-mode
 #+begin_src emacs-lisp
   (use-package fountain-mode
-    :bind (:map evil-normal-state-map
-  	      ("SPC ff" . fountain-mode)))
+    :hook (fountain-mode . variable-pitch-mode))
 #+end_src
 
 
@@ -121,7 +120,7 @@ More pretties
   (setq default-frame-alist '((min-height . 1)  '(height . 45)
 			      (min-width  . 1)  '(width  . 81)
 			      (vertical-scroll-bars . nil)
-			      (internal-border-width . 24)
+			      (internal-border-width . 20)
 			      (left-fringe . 0)
 			      (right-fringe . 0)
 			      (tool-bar-lines . 0)
@@ -133,7 +132,7 @@ Default fonts
 #+begin_src emacs-lisp
     (set-face-attribute 'default nil
     		    :family "JetBrains Mono"
-    		    :weight 'light
+    		    :weight 'medium
     		    :height 104)
 
     (set-face-attribute 'bold nil
@@ -142,7 +141,7 @@ Default fonts
 
     (set-face-attribute 'italic nil
                         :family "JetBrains Mono"
-                        :weight 'light
+                        :weight 'medium
                         :slant 'italic)
 #+end_src
 Pitch fonts
@@ -160,11 +159,10 @@ Pitch fonts
 
 ** Theme
 #+begin_src emacs-lisp
-  (use-package mindre-theme)
-  (use-package ef-themes
-    :init
-    (load-theme 'ef-dark t))
-#+end_src
+  (use-package doom-themes
+    :config
+    (load-theme 'doom-one t))
+ #+end_src
 
 ** Cursor
 #+begin_src emacs-lisp
@@ -209,7 +207,6 @@ Prefix the current candidate with ⟶
 #+begin_src emacs-lisp
   (use-package counsel
     :bind (("C-x C-f" . counsel-find-file)
-  	 ("M-g i" . counsel-imenu)
   	 ("C-s" . swiper)))
 #+end_src
 
@@ -239,14 +236,12 @@ Gonna sweep the default modeline under the rug
   (set-face-attribute 'mode-line-active nil
                       :box nil
                       :inherit nil
-                      :foreground "#1a1a1a"
-                      :background "#1a1a1a"
+                      :background (face-background 'vertical-border)
                       :height 0.1)
   (set-face-attribute 'mode-line-inactive nil
                       :box nil
                       :inherit nil
-                      :foreground "#1a1a1a"
-                      :background "#1a1a1a"
+                      :background (face-background 'vertical-border)
                       :height 0.1)
 #+end_src
 
