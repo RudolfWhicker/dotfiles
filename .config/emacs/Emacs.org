@@ -162,6 +162,9 @@ Pitch fonts
   (use-package doom-themes
     :config
     (load-theme 'doom-one t))
+  (use-package solaire-mode
+    :config
+    (solaire-global-mode))
  #+end_src
 
 ** Cursor
@@ -246,32 +249,6 @@ Gonna sweep the default modeline under the rug
 #+end_src
 
 
-* Keybinding
-** evil
-#+begin_src emacs-lisp
-  (use-package undo-fu)
-
-  (use-package evil
-    :init
-    (setq evil-undo-system 'undo-fu)
-    :config
-    (evil-mode))
-#+end_src
-** Esc to keyboard-escape-quit
-#+begin_src emacs-lisp
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-#+end_src
-** which-key
-#+begin_src emacs-lisp
-  (use-package which-key
-    :init
-    ;; Allow C-h to trigger which-key before it is done automatically
-    (setq which-key-show-early-on-C-h t)
-    :config
-    (which-key-mode))
-#+end_src
-
-
 * Coding
 ** Snippets
 yasnippet =]
@@ -286,8 +263,6 @@ yasnippet =]
 I use lsp-mode
 #+begin_src emacs-lisp
   (use-package lsp-mode
-    :bind (:map evil-normal-state-map
-  	 ("SPC ll" . lsp))
     :init
     (setq lsp-headerline-breadcrumbs-enable nil))
 #+end_src
@@ -315,6 +290,53 @@ Some pretties
 ** Magit
 #+begin_src emacs-lisp
   (use-package magit)
+#+end_src
+
+
+* Keybinding
+** evil
+#+begin_src emacs-lisp
+  (use-package undo-fu)
+
+  (use-package evil
+    :init
+    (setq evil-undo-system 'undo-fu)
+    :config
+    (evil-mode))
+#+end_src
+
+** general.el
+#+begin_src emacs-lisp
+  (use-package general)
+
+  (general-def evil-normal-state-map
+    :prefix "SPC"
+    ;; LSP
+    "ll" 'lsp
+
+    ;; navigation
+    "ff" 'counsel-find-file
+
+    ;; project
+    "ss" 'counsel-search
+    "mm" 'magit
+
+    ;; writing
+    "wf" 'fountain-mode)
+#+end_src
+
+** Esc to keyboard-escape-quit
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+#+end_src
+** which-key
+#+begin_src emacs-lisp
+  (use-package which-key
+    :init
+    ;; Allow C-h to trigger which-key before it is done automatically
+    (setq which-key-show-early-on-C-h t)
+    :config
+    (which-key-mode))
 #+end_src
 
 
