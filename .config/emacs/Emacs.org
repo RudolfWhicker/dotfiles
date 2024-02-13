@@ -56,6 +56,11 @@
 	`((".*" "~/.local/share/emacs/autostart" t)))
 #+end_src
 
+** yes-or-no to y-or-n
+#+begin_src emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
 ** History
 #+begin_src emacs-lisp
   (use-package savehist
@@ -69,6 +74,22 @@
 #+begin_src emacs-lisp
   (use-package smartparens
     :hook ((prog-mode text-mode markdown-mode) . smartparens-mode))
+#+end_src
+
+Rainbow delimiters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook ((prog-mode . rainbow-delimiters-mode)
+  	 (org-mode . rainbow-delimiters-mode)))
+#+end_src
+
+** Garbage Collection
+#+begin_src emacs-lisp
+  (use-package gcmh
+    :config
+    (setq gcmh-idle-delay 5
+  	gcmh-high-cons-threshold (* 16 1024 1024)) ;; 16mb
+    (gcmh-mode 1))
 #+end_src
 
 
@@ -112,19 +133,34 @@ More pretties
 
 
 * UI
-** Frame
+** Frame & Window
 #+begin_src emacs-lisp
   (require 'frame)
 
   ;; Default frame settings
   (setq default-frame-alist '((min-height . 1)  '(height . 45)
-			      (min-width  . 1)  '(width  . 81)
-			      (vertical-scroll-bars . nil)
-			      (internal-border-width . 20)
-			      (left-fringe . 0)
-			      (right-fringe . 0)
-			      (tool-bar-lines . 0)
-			      (menu-bar-lines . 0)))
+  			      (min-width  . 1)  '(width  . 81)
+  			      (vertical-scroll-bars . nil)
+  			      (internal-border-width . 20)
+  			      (left-fringe . 0)
+  			      (right-fringe . 0)
+  			      (tool-bar-lines . 0)
+  			      (menu-bar-lines . 0)))
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+#+end_src
+No more resizing frame in steps
+#+begin_src emacs-lisp
+  (setq frame-resize-pixelwise t)
+#+end_src
+Resize windows in steps though
+#+begin_src emacs-lisp
+  (setq window-resize-pixelwise nil)
+#+end_src
+
+** Lines
+Truncate lines
+#+begin_src emacs-lisp
+  (setq-default truncate-lines t)
 #+end_src
 
 ** Font
@@ -249,9 +285,14 @@ Gonna sweep the default modeline under the rug
 #+end_src
 
 
-* Coding
+* Developement
+** vterm
+#+begin_src emacs-lisp
+  (use-package vterm)
+#+end_src
+
 ** Snippets
-yasnippet =]
+yasnippet
 #+begin_src emacs-lisp
   (use-package yasnippet-snippets)
   (use-package yasnippet
@@ -302,6 +343,22 @@ Some pretties
     :init
     (setq evil-undo-system 'undo-fu)
     :config
+    (evil-set-initial-state 'dashboard-mode 'motion)
+    (evil-set-initial-state 'debugger-mode 'motion)
+    (evil-set-initial-state 'pdf-view-mode 'motion)
+
+    ;; Keybindings
+    (define-key evil-motion-state-map "/" 'swiper)
+
+    ;; Cursor colors
+    (setq evil-emacs-state-cursor '((face-background 'cursor) box))
+    (setq evil-normal-state-cursor '((face-background 'cursor) box))
+    (setq evil-operator-state-cursor '((face-background 'cursor) hollow))
+    (setq evil-visual-state-cursor '((face-background 'cursor) box))
+    (setq evil-insert-state-cursor '((face-background 'cursor) hbar))
+    (setq evil-replace-state-cursor '((face-background 'cursor) hbar))
+    (setq evil-motion-state-cursor '((face-background 'cursor) box))
+    
     (evil-mode))
 #+end_src
 
@@ -312,23 +369,33 @@ Some pretties
   (general-def evil-normal-state-map
     :prefix "SPC"
     ;; LSP
-    "ll" 'lsp
+    "l" '(nil :which-key "lsp")
+    "ll" '(lsp :which-key "start lsp")
 
     ;; navigation
-    "ff" 'counsel-find-file
+    "f" '(nil :which-key "navigation")
+    "ff" '(counsel-find-file :which-key "find file")
 
     ;; project
-    "ss" 'counsel-search
-    "mm" 'magit
+    "s" '(nil :which-key "project")
+    "ss" '(counsel-search :which-key "search project folder")
+    "sm" '(magit :which-key "start magit")
 
     ;; writing
-    "wf" 'fountain-mode)
+    "w" '(nil :which-key "writing")
+    "wf" '(fountain-mode :which-key "fountain mode"))
 #+end_src
 
 ** Esc to keyboard-escape-quit
 #+begin_src emacs-lisp
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 #+end_src
+
+** TODO hydra
+#+begin_src emacs-lisp
+  
+#+end_src
+
 ** which-key
 #+begin_src emacs-lisp
   (use-package which-key
