@@ -70,6 +70,23 @@
     (savehist-mode))
 #+end_src
 
+** Remembering recent edits
+#+begin_src emacs-lisp
+  (recentf-mode 1)
+  (save-place-mode 1)
+#+end_src
+
+** Prevent UI dialogs
+#+begin_src emacs-lisp
+  (setq use-dialog-box nil)
+#+end_src
+
+** Auto Revert
+#+begin_src emacs-lisp
+  (global-auto-revert-mode 1)
+  (setq global-auto-revert-non-file-buffers t)
+#+end_src
+
 ** Paranthesis
 #+begin_src emacs-lisp
   (use-package smartparens
@@ -124,7 +141,7 @@ More pretties
 #+end_src
 
 
-* Writing
+
 ** fountain-mode
 #+begin_src emacs-lisp
   (use-package fountain-mode
@@ -167,16 +184,16 @@ Truncate lines
 Default fonts
 #+begin_src emacs-lisp
     (set-face-attribute 'default nil
-    		    :family "JetBrains Mono"
-    		    :weight 'medium
+    		    :family "Hack"
+    		    :weight 'regular
     		    :height 104)
 
     (set-face-attribute 'bold nil
-                        :family "JetBrains Mono"
+                        :family "Hack"
                         :weight 'bold)
 
     (set-face-attribute 'italic nil
-                        :family "JetBrains Mono"
+                        :family "Hack"
                         :weight 'medium
                         :slant 'italic)
 #+end_src
@@ -197,10 +214,7 @@ Pitch fonts
 #+begin_src emacs-lisp
   (use-package doom-themes
     :config
-    (load-theme 'doom-one t))
-  (use-package solaire-mode
-    :config
-    (solaire-global-mode))
+    (load-theme 'doom-vibrant t))
  #+end_src
 
 ** Cursor
@@ -375,6 +389,7 @@ Some pretties
     ;; navigation
     "f" '(nil :which-key "navigation")
     "ff" '(counsel-find-file :which-key "find file")
+    "fr" '(recentf-open :which-key "recent files")
 
     ;; project
     "s" '(nil :which-key "project")
